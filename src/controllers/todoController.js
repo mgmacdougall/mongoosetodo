@@ -52,4 +52,33 @@ async function updateOne(id, body) {
   }
 }
 
-module.exports = {postTodo, getAllToDos, getToDoById, updateOne};
+async function findToDos(query) {
+  try {
+    let _title = query.title;
+    let _query = {title: {$regex: _title, $options: 'i'}};
+    let result = await todoModel.find(_query);
+    return result;
+  } catch (e) {
+    console.log(e);
+    return {message: e};
+  }
+}
+
+async function deleteById(toDoId) {
+  try {
+    console.log(toDoId);
+    let res = await todoModel.deleteOne({_id: toDoId});
+    return {message: res};
+  } catch (error) {
+    return {err: error};
+  }
+}
+
+module.exports = {
+  postTodo,
+  getAllToDos,
+  getToDoById,
+  updateOne,
+  findToDos,
+  deleteById
+};

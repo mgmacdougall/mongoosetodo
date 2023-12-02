@@ -3,6 +3,7 @@ const express = require('express');
 let todoController = require('../controllers/todoController');
 
 const router = express.Router();
+
 router.get('/', async (req, res) => {
   try {
     let result = await todoController.getAllToDos();
@@ -12,6 +13,17 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/search', async (req, res) => {
+  const {title, limit} = req.query;
+
+  try {
+    let result = await todoController.findToDos({title});
+    res.send(result);
+  } catch (e) {
+    console.log(e);
+    res.json({message: e});
+  }
+});
 // Query for one item in the database
 router.get('/:queryId', async (req, res) => {
   const {queryId} = req.params;
@@ -42,6 +54,20 @@ router.patch('/:id', async (req, res) => {
     res.json(result);
   } catch (err) {
     res.send(err);
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  console.log('here');
+  const {id} = req.params;
+  try {
+    let result = todoController.deleteById(id);
+    console.log(result);
+    if (result) {
+      res.json({message: 'success'});
+    }
+  } catch (error) {
+    res.json({err: error});
   }
 });
 
